@@ -1,5 +1,14 @@
 <?php
 
+/*
+ * This file is part of bhittani/path.
+ *
+ * (c) Kamal Khan <shout@bhittani.com>
+ *
+ * For the full copyright and license information, please view
+ * the LICENSE file that was distributed with this source code.
+ */
+
 namespace Bhittani\Path;
 
 class Path
@@ -15,7 +24,7 @@ class Path
     {
         $path = array_shift($paths);
 
-        if (! $this->isAbsolute($path)) {
+        if (!$this->isAbsolute($path)) {
             $path = $this->absolute($path);
         }
 
@@ -26,13 +35,13 @@ class Path
      * Get the absolute path.
      *
      * @param null|string $path
-     * @param bool $force
+     * @param bool        $force
      *
      * @return string
      */
     public function absolute($path = null, $force = false)
     {
-        if (! $force && $this->isAbsolute($path)) {
+        if (!$force && $this->isAbsolute($path)) {
             return $this->normalize($path);
         }
 
@@ -72,9 +81,9 @@ class Path
             // x:/, x:\
             || (strlen($path) == 3 && $this->isDisk($path))
             // xxx://, xxx:\\
-            || (! is_null($scheme = parse_url($path, PHP_URL_SCHEME))
+            || (!is_null($scheme = parse_url($path, PHP_URL_SCHEME))
                 && strlen($scheme) != 1
-                && (! ($p = parse_url($path, PHP_URL_PATH))
+                && (!($p = parse_url($path, PHP_URL_PATH))
                     || $p == '/'
                 )
             )
@@ -108,7 +117,7 @@ class Path
      */
     public function sanitize($paths)
     {
-        if (! is_array($paths)) {
+        if (!is_array($paths)) {
             return str_replace('\\', '/', $paths);
         }
 
@@ -141,7 +150,7 @@ class Path
      */
     protected function isUrl($path)
     {
-        return ! is_null(parse_url($path, PHP_URL_SCHEME));
+        return !is_null(parse_url($path, PHP_URL_SCHEME));
     }
 
     /**
@@ -153,6 +162,6 @@ class Path
      */
     protected function startsWithSlash($path)
     {
-        return ! empty($path) && $this->sanitize($path[0]) == '/';
+        return !empty($path) && $this->sanitize($path[0]) == '/';
     }
 }
