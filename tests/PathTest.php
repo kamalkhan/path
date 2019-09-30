@@ -2,6 +2,7 @@
 
 namespace Bhittani\Path;
 
+use OutOfBoundsException;
 use PHPUnit\Framework\TestCase;
 
 class PathTest extends TestCase
@@ -27,19 +28,6 @@ class PathTest extends TestCase
             'foo\bar/',
             'fizz\buzz\\',
         ]));
-    }
-
-    /** @test */
-    function join()
-    {
-        $this->assertEquals('foo', $this->path->join('foo', '/'));
-        $this->assertEquals('/foo', $this->path->join('/', 'foo'));
-        $this->assertEquals('foo/bar/baz', $this->path->join('foo', 'bar', 'baz'));
-        $this->assertEquals('/foo/bar/baz', $this->path->join('/foo', 'bar', 'baz'));
-        $this->assertEquals('/foo/bar/baz', $this->path->join('/foo', 'bar', 'baz/'));
-        $this->assertEquals('/foo/bar/baz', $this->path->join('/foo', '/bar', 'baz/'));
-        $this->assertEquals('/foo/bar/baz', $this->path->join('/foo', '/bar/', 'baz/'));
-        $this->assertEquals('http://example.com/foo', $this->path->join('http://example.com', 'foo'));
     }
 
     /** @test */
@@ -95,14 +83,48 @@ class PathTest extends TestCase
     }
 
     /** @test */
+    function join()
+    {
+        $this->assertEquals('bar', $this->path->join('./', 'bar'));
+
+        $this->assertEquals('/baz', $this->path->join('/', './bar', '../baz'));
+
+        $this->assertEquals('/foo/baz', $this->path->join('/foo', './bar', '../baz'));
+
+        $this->assertEquals('foo/buzz', $this->path->join(
+            'foo', '/bar', './baz/.././fizz/', '/..', './', '..', './buzz'
+        ));
+
+        $this->assertEquals('../../fizz', $this->path->join(
+            'foo', '/bar', '../', '../baz', '/../../.././fizz'
+        ));
+    }
+
+    /** @test */
+    function join_throws_an_out_of_bounds_exception_if_the_path_gets_past_the_root()
+    {
+        try {
+            $this->path->join('/foo', '/bar', '../', '../baz', '/../../.././fizz');
+        } catch (OutOfBoundsException $e) {
+            return $this->assertEquals('A path can not get past the root.', $e->getMessage());
+        }
+
+        $this->fail(sprintf('Expected an %s exception to be thrown.', OutOfBoundsException::class));
+    }
+
+    /** @test */
     function normalize()
     {
         $path = dirname(__DIR__);
 
-        $this->assertEquals($path, $this->path->normalize());
+        $this->assertEquals($path, $this->path->normalize(null));
+
+        $this->assertEquals($path.'/foo/buzz', $this->path->normalize(
+            'foo', '/bar', './baz/.././fizz/', '/..', './', '..', './buzz'
+        ));
+
         $this->assertEquals('/foo/bar', $this->path->normalize('/', 'foo', 'bar', '/'));
         $this->assertEquals('/foo/bar', $this->path->normalize('/foo', 'bar/'));
-        $this->assertEquals($path.'/foo/bar/baz', $this->path->normalize('foo', 'bar', 'baz'));
         $this->assertEquals('/foo.php', $this->path->normalize('/foo.php/'));
         $this->assertEquals('/', $this->path->normalize('/'));
         $this->assertEquals('c:/', $this->path->normalize('c:/'));

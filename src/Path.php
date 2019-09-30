@@ -11,19 +11,20 @@
 
 namespace Bhittani\Path;
 
+use OutOfBoundsException;
+
 class Path
 {
     /**
      * Normalize and join the paths.
      *
+     * @param string $path
      * @param string $paths,...
      *
      * @return string
      */
-    public function normalize(...$paths)
+    public function normalize($path, ...$paths)
     {
-        $path = array_shift($paths);
-
         if (!$this->isAbsolute($path)) {
             $path = $this->absolute($path);
         }
@@ -93,19 +94,31 @@ class Path
     /**
      * Join paths.
      *
+     * @param string $path
      * @param string $paths,...
+     *
+     * @throws OutOfBoundsException if the path gets past the root.
      *
      * @return string
      */
-    public function join(...$paths)
+    public function join($path, ...$paths)
     {
+        $path = $this->sanitize($path);
         $paths = $this->sanitize($paths);
 
-        $path = array_shift($paths);
+        $path = $this->isRoot($path)
+            ? (rtrim($path, '/').'/')
+            : rtrim($path, '/');
 
-        return array_reduce($paths, function ($prefix, $suffix) {
-            return rtrim(rtrim($prefix, '/').'/'.ltrim($suffix, '/'), '/');
-        }, rtrim($path, '/').($this->isRoot($path) ? '/' : ''));
+        if (strpos($path, '.') === 0) {
+            $path = substr($path, 1);
+        }
+
+        $paths = array_filter(explode('/', implode('/', $paths)), function ($path) {
+            return $path && $path != '.';
+        });
+
+        return array_reduce($paths, [$this, 'concat'], $path);
     }
 
     /**
@@ -163,5 +176,40 @@ class Path
     protected function startsWithSlash($path)
     {
         return !empty($path) && $this->sanitize($path[0]) == '/';
+    }
+
+    /**
+     * Concact two paths.
+     *
+     * @param string $path1
+     * @param string $path2
+     *
+     * @throws OutOfBoundsException if the path gets past the root.
+     *
+     * @return string
+     */
+    protected function concat($path1, $path2)
+    {
+        if ($path2 != '..') {
+            if (! $path1) {
+                return $path2;
+            }
+
+            return rtrim($path1, '/').'/'.$path2;
+        }
+
+        if ($path1 == '/') {
+            throw new OutOfBoundsException('A path can not get past the root.');
+        }
+
+        if (! $path1) {
+            return '..';
+        }
+
+        if ($path1 == '..') {
+            return '../..';
+        }
+
+        return rtrim(dirname($path1), '.');
     }
 }
