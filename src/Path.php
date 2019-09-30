@@ -191,7 +191,7 @@ class Path
     protected function concat($path1, $path2)
     {
         if ($path2 != '..') {
-            if (! $path1) {
+            if (!$path1) {
                 return $path2;
             }
 
@@ -202,7 +202,7 @@ class Path
             throw new OutOfBoundsException('A path can not get past the root.');
         }
 
-        if (! $path1) {
+        if (!$path1) {
             return '..';
         }
 
