@@ -41,7 +41,7 @@ require_once __DIR__ . '/vendor/autoload.php';
 
 $path = new \Bhittani\Path\Path();
 
-// Use the api calls as demonstrated below.
+// Use the API calls as demonstrated below.
 ```
 
 ### Sanitize
@@ -54,10 +54,10 @@ echo $path->sanitize('\foo/bar\baz'); // '/foo/bar/baz'
 
 ### Join
 
-Join parts of a paths.
+Join partial paths.
 
 ```php
-echo $path->join('foo', 'bar', '/baz/'); // 'foo/bar/baz'
+echo $path->join('foo', './bar', '../baz/..'); // 'foo'
 ```
 
 > This will also sanitize the paths under the hood.
@@ -79,8 +79,8 @@ echo $path->absolute('/foo', true); // getcwd().'/foo'
 Normalize is identical to `join` but it ensures an absolute path.
 
 ```php
-echo $path->normalize('/foo', 'bar/', '/baz/'); // '/foo/bar/baz'
-echo $path->normalize('foo', 'bar', '/baz/'); // getcwd().'/foo'
+echo $path->normalize('/foo', 'bar/', '../baz/'); // '/foo/baz'
+echo $path->normalize('foo', './bar', '/../baz'); // getcwd().'/foo/baz'
 ```
 
 ### Is Absolute
