@@ -1,5 +1,14 @@
 <?php
 
+/*
+ * This file is part of bhittani/path.
+ *
+ * (c) Kamal Khan <shout@bhittani.com>
+ *
+ * For the full copyright and license information, please view
+ * the LICENSE file that was distributed with this source code.
+ */
+
 namespace Bhittani\Path;
 
 use OutOfBoundsException;
@@ -7,15 +16,15 @@ use PHPUnit\Framework\TestCase;
 
 class PathTest extends TestCase
 {
-    var $path;
+    public $path;
 
-    function setUp()
+    public function setUp()
     {
-        $this->path = new Path;
+        $this->path = new Path();
     }
 
     /** @test */
-    function sanitize()
+    public function sanitize()
     {
         $this->assertEquals('foo/bar', $this->path->sanitize('foo/bar'));
         $this->assertEquals('foo/bar', $this->path->sanitize('foo\bar'));
@@ -31,7 +40,7 @@ class PathTest extends TestCase
     }
 
     /** @test */
-    function isAbsolute()
+    public function isAbsolute()
     {
         $this->assertFalse($this->path->isAbsolute('foo'));
         $this->assertFalse($this->path->isAbsolute('foo/bar'));
@@ -50,7 +59,7 @@ class PathTest extends TestCase
     }
 
     /** @test */
-    function isRoot()
+    public function isRoot()
     {
         $this->assertFalse($this->path->isRoot('foo'));
         $this->assertFalse($this->path->isRoot('/foo'));
@@ -73,7 +82,7 @@ class PathTest extends TestCase
     }
 
     /** @test */
-    function absolute()
+    public function absolute()
     {
         $path = dirname(__DIR__);
 
@@ -83,7 +92,7 @@ class PathTest extends TestCase
     }
 
     /** @test */
-    function join()
+    public function join()
     {
         $this->assertEquals('bar', $this->path->join('./', 'bar'));
 
@@ -101,7 +110,7 @@ class PathTest extends TestCase
     }
 
     /** @test */
-    function join_throws_an_out_of_bounds_exception_if_the_path_gets_past_the_root()
+    public function join_throws_an_out_of_bounds_exception_if_the_path_gets_past_the_root()
     {
         try {
             $this->path->join('/foo', '/bar', '../', '../baz', '/../../.././fizz');
@@ -113,7 +122,7 @@ class PathTest extends TestCase
     }
 
     /** @test */
-    function normalize()
+    public function normalize()
     {
         $path = dirname(__DIR__);
 

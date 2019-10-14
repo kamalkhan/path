@@ -1,5 +1,14 @@
 <?php
 
+/*
+ * This file is part of bhittani/path.
+ *
+ * (c) Kamal Khan <shout@bhittani.com>
+ *
+ * For the full copyright and license information, please view
+ * the LICENSE file that was distributed with this source code.
+ */
+
 namespace Bhittani\Path;
 
 use BadMethodCallException;
@@ -8,13 +17,13 @@ use PHPUnit\Framework\TestCase;
 class StaticPathTest extends TestCase
 {
     /** @test */
-    function it_passes_through_to_the_underlying_shared_instance()
+    public function it_passes_through_to_the_underlying_shared_instance()
     {
         $this->assertEquals('foo/bar', StaticPath::sanitize('foo\bar'));
     }
 
     /** @test */
-    function it_throws_a_bad_method_call_exception_if_the_method_does_not_exist()
+    public function it_throws_a_bad_method_call_exception_if_the_method_does_not_exist()
     {
         try {
             StaticPath::method404();
