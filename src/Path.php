@@ -25,7 +25,7 @@ class Path
      */
     public function normalize($path, ...$paths)
     {
-        if (! $this->isAbsolute($path)) {
+        if (!$this->isAbsolute($path)) {
             $path = $this->absolute($path);
         }
 
@@ -42,7 +42,7 @@ class Path
      */
     public function absolute($path = null, $force = false)
     {
-        if (! $force && $this->isAbsolute($path)) {
+        if (!$force && $this->isAbsolute($path)) {
             return $this->normalize($path);
         }
 
@@ -82,9 +82,9 @@ class Path
             // x:/, x:\
             || (strlen($path) == 3 && $this->isDisk($path))
             // xxx://, xxx:\\
-            || (! is_null($scheme = parse_url($path, PHP_URL_SCHEME))
+            || (!is_null($scheme = parse_url($path, PHP_URL_SCHEME))
                 && strlen($scheme) != 1
-                && (! ($p = parse_url($path, PHP_URL_PATH))
+                && (!($p = parse_url($path, PHP_URL_PATH))
                     || $p == '/'
                 )
             )
@@ -130,7 +130,7 @@ class Path
      */
     public function sanitize($paths)
     {
-        if (! is_array($paths)) {
+        if (!is_array($paths)) {
             return str_replace('\\', '/', $paths);
         }
 
@@ -163,7 +163,7 @@ class Path
      */
     protected function isUrl($path)
     {
-        return ! is_null(parse_url($path, PHP_URL_SCHEME));
+        return !is_null(parse_url($path, PHP_URL_SCHEME));
     }
 
     /**
@@ -175,7 +175,7 @@ class Path
      */
     protected function startsWithSlash($path)
     {
-        return ! empty($path) && $this->sanitize($path[0]) == '/';
+        return !empty($path) && $this->sanitize($path[0]) == '/';
     }
 
     /**
@@ -191,7 +191,7 @@ class Path
     protected function concat($path1, $path2)
     {
         if ($path2 != '..') {
-            if (! $path1) {
+            if (!$path1) {
                 return $path2;
             }
 
@@ -202,7 +202,7 @@ class Path
             throw new OutOfBoundsException('A path can not get past the root.');
         }
 
-        if (! $path1) {
+        if (!$path1) {
             return '..';
         }
 
