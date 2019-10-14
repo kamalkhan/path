@@ -21,7 +21,7 @@ class StaticPath
      * @param string  $name
      * @param mixed[] $arguments
      *
-     * @throws BadMethodCallException if the method does not exist on the instance.
+     * @throws BadMethodCallException if the method does not exist on the instance
      *
      * @return mixed
      */
